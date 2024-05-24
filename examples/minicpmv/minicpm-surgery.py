@@ -9,7 +9,7 @@ ap.add_argument("-m", "--model", help="Path to LLaVA v1.5 model")
 args = ap.parse_args()
 
 # find the model part that includes the the multimodal projector weights
-model = AutoModel.from_pretrained(args.model, trust_remote_code=True)
+model = AutoModel.from_pretrained(args.model, trust_remote_code=True, device_map="auto")
 checkpoint = model.state_dict()
 
 # get a list of mm tensor names
@@ -39,7 +39,7 @@ config.auto_map = {
     "AutoModelForSequenceClassification": "modeling_minicpm.MiniCPMForSequenceClassification"
 }
 model.llm.save_pretrained(f"{args.model}/MiniCPM")
-tok = AutoTokenizer.from_pretrained(args.model, trust_remote_code=True)
+tok = AutoTokenizer.from_pretrained(args.model, trust_remote_code=True, device_map="auto")
 tok.save_pretrained(f"{args.model}/MiniCPM")
 os.system(f"cp {args.model}/modeling_minicpm.py {args.model}/MiniCPM/modeling_minicpm.py")
 os.system(f"cp {args.model}/tokenizer.json {args.model}/MiniCPM/tokenizer.json")
